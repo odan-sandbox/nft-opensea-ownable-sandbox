@@ -1,21 +1,24 @@
 module.exports = {
   env: {
-    browser: true,
+    browser: false,
+    es2021: true,
+    mocha: true,
     node: true,
   },
+  plugins: ["@typescript-eslint"],
   extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:jest/all",
-    "prettier",
+    "standard",
+    "plugin:prettier/recommended",
+    "plugin:node/recommended",
   ],
-  plugins: ["jest", "@typescript-eslint"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    sourceType: "module",
+    ecmaVersion: 12,
   },
   rules: {
-    "jest/require-hook": "off",
+    "node/no-unsupported-features/es-syntax": [
+      "error",
+      { ignores: ["modules"] },
+    ],
   },
 };
