@@ -6,20 +6,40 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+  const deployer = (await ethers.getSigners())[0];
+  const owner = (await ethers.getSigners())[1];
+  const minter = (await ethers.getSigners())[0];
+  console.log({
+    deployer: deployer.address,
+    owner: owner.address,
+    minter: minter.address,
+  });
 
-  // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const TokenWithoutOwnable = await ethers.getContractFactory(
+    "TokenWithoutOwnable"
+  );
+  const TokenWithOwnable = await ethers.getContractFactory("TokenWithOwnable");
 
-  await greeter.deployed();
+  const tokenWithoutOwnable = await TokenWithoutOwnable.deploy(
+    "TokenWithoutOwnable",
+    "TokenWithoutOwnable",
+    minter.address
+  );
+  const tokenWithOwnable = await TokenWithOwnable.deploy(
+    "TokenWithOwnable",
+    "TokenWithOwnable",
+    minter.address,
+    owner.address
+  );
 
-  console.log("Greeter deployed to:", greeter.address);
+  await tokenWithoutOwnable.deployed();
+  await tokenWithOwnable.deployed();
+
+  await (await tokenWithoutOwnable.mint(minter.address, 0)).wait();
+  await (await tokenWithOwnable.mint(minter.address, 0)).wait();
+
+  console.log("deployed to:", tokenWithoutOwnable.address);
+  console.log("deployed to:", tokenWithOwnable.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

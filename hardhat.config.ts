@@ -17,6 +17,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   for (const account of accounts) {
     console.log(account.address);
   }
+  console.log(await (await hre.ethers.getSigners())[0].getChainId());
 });
 
 // You need to export an object to set up your config
@@ -25,10 +26,12 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    rinkeby: {
+      url: process.env.RINKEBY_URL || "",
+      accounts: [
+        process.env.DEPLOYER_PRIVATE_KEY!,
+        process.env.OWNER_PRIVATE_KEY!,
+      ],
     },
   },
   gasReporter: {
